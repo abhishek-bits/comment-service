@@ -7,11 +7,14 @@ import com.postman.comment_service.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,18 +32,38 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto getCommentDtoById(Long id) {
         Optional<Comment> commentOptional = getCommentById(id);
 
-        // All the replies to this comment will have refernce to the primary
-        List<Comment> replies = commentRepository.findByParentCommentId(commentOptional.get().getId());
+        if(commentOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
+        }
 
-//        List<CommentDto> repliesDto = replies.stream().map(reply -> {
-//            return CommentDto.builder()
-//                    .id(reply.getId())
-//                    .description(reply.getDescription())
-//                    .build();
-//        });
-//
-//        return CommentDto.builder().replies(replies).build();
+        Comment comment = commentOptional.get();
 
+        // Get all replies for this comment
+        List<Comment> replies = commentRepository.findByParentCommentId(comment.getId());
+
+        List<CommentDto> repliesCommentDto = new ArrayList<>();
+
+        for(Comment reply : replies) {
+
+            // Check if this reply has any further replies
+            if(reply.getParentCommentId() == null || reply.getParentCommentId() == 0) {
+                repliesCommentDto.add(CommentDto.builder()
+                                .id(reply.getId())
+                                .description(reply.getDescription())
+                                .replies(Collections.emptyList())
+                        .build());
+            } else {
+                CommentDto replyCommentDto = getCommentDtoById(reply.getId());
+                repliesCommentDto.add(replyCommentDto);
+            }
+
+        }
+
+        return CommentDto.builder()
+                .id(comment.getId())
+                .description(comment.getDescription())
+                .replies(repliesCommentDto)
+                .build();
     }
 
 

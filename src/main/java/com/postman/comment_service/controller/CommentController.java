@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +34,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ApiResponse> createComment(@PathVariable Long id) {
+    ResponseEntity<ApiResponse> getCommentById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.builder()
                         .timeStamp(LocalDateTime.now())
                         .message("Comment fetched successfully")
@@ -49,6 +48,15 @@ public class CommentController {
                 .timeStamp(LocalDateTime.now())
                 .message("Replies fetched successfully")
                 .data(Map.of("replies", commentService.getRepliesByCommentId(id)))
+                .build());
+    }
+
+    @GetMapping("/{id}/list")
+    ResponseEntity<ApiResponse> getCommentDto(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .message("Contacts fetched successfully")
+                .data(Map.of("replies", commentService.getCommentDtoById(id)))
                 .build());
     }
 }
