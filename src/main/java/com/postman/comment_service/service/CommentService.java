@@ -13,6 +13,8 @@ public interface CommentService {
 
     List<Comment> getAllComments();
 
+    List<CommentDto> getAllCommentDtos();
+
     List<Comment> getRepliesByCommentId(Long commentId);
 
     Comment saveComment(Comment comment);

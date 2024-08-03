@@ -51,12 +51,21 @@ public class CommentController {
                 .build());
     }
 
-    @GetMapping("/{id}/list")
+    @GetMapping("/list/{id}")
     ResponseEntity<ApiResponse> getCommentDto(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.builder()
                 .timeStamp(LocalDateTime.now())
-                .message("Contacts fetched successfully")
-                .data(Map.of("replies", commentService.getCommentDtoById(id)))
+                .message("Comments fetched successfully")
+                .data(Map.of("comments", commentService.getCommentDtoById(id)))
+                .build());
+    }
+
+    @GetMapping("/list")
+    ResponseEntity<ApiResponse> getAllCommentDtos() {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .message("Comments fetched successfully")
+                .data(Map.of("comments", commentService.getAllCommentDtos()))
                 .build());
     }
 }
