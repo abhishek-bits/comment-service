@@ -58,34 +58,24 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateCommentById(Long id, Comment commentRequest) {
-
-        Optional<Comment> commentOptional = commentRepository.findById(id);
-
-        if(commentOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found.");
-        }
-
-        Comment comment = commentOptional.get();
-
-        comment.setDescription(commentRequest.getDescription());
-        comment.setLikes(commentRequest.getLikes());
-
-        return commentRepository.save(comment);
+        return commentRepository.findById(id)
+                .map(comment -> {
+                    comment.setDescription(commentRequest.getDescription());
+                    comment.setLikes(commentRequest.getLikes());
+                    return commentRepository.save(comment);
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found."));
     }
 
     @Transactional
     @Override
     public Comment deleteCommentById(Long id) {
-
-        Optional<Comment> commentOptional = commentRepository.findById(id);
-
-        if(commentOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found.");
-        }
-
-        deleteComment(commentOptional.get());
-
-        return commentOptional.get();
+        return commentRepository.findById(id)
+                .map(comment -> {
+                    deleteComment(comment);
+                    return comment;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found."));
     }
 
     private void deleteComment(Comment comment) {
