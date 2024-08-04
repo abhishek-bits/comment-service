@@ -6,9 +6,11 @@ import com.postman.comment_service.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,39 +35,30 @@ public class CommentController {
                         .build());
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<ApiResponse> getCommentById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.builder()
-                        .timeStamp(LocalDateTime.now())
-                        .message("Comment fetched successfully")
-                        .data(Map.of("comment", commentService.getCommentById(id)))
-                        .build());
-    }
-
-    @GetMapping("/{id}/replies")
-    ResponseEntity<ApiResponse> getRepliesByCommentId(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.builder()
-                .timeStamp(LocalDateTime.now())
-                .message("Replies fetched successfully")
-                .data(Map.of("replies", commentService.getRepliesByCommentId(id)))
-                .build());
-    }
-
-    @GetMapping("/list/{id}")
-    ResponseEntity<ApiResponse> getCommentDto(@PathVariable Long id) {
+    @GetMapping()
+    ResponseEntity<ApiResponse> getAllComments() {
         return ResponseEntity.ok(ApiResponse.builder()
                 .timeStamp(LocalDateTime.now())
                 .message("Comments fetched successfully")
-                .data(Map.of("comments", commentService.getCommentDtoById(id)))
+                .data(Map.of("comments", commentService.getAllComments()))
                 .build());
     }
 
-    @GetMapping("/list")
-    ResponseEntity<ApiResponse> getAllCommentDtos() {
+    @PutMapping("/{id}")
+    ResponseEntity<ApiResponse> updateComment(@PathVariable Long id, @RequestBody Comment comment) {
         return ResponseEntity.ok(ApiResponse.builder()
                 .timeStamp(LocalDateTime.now())
-                .message("Comments fetched successfully")
-                .data(Map.of("comments", commentService.getAllCommentDtos()))
+                .message("Comment updated successfully")
+                .data(Map.of("comment", commentService.updateCommentById(id, comment)))
+                .build());
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<ApiResponse> deleteComment(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .message("Comment deleted successfully")
+                .data(Map.of("comment", commentService.deleteCommentById(id)))
                 .build());
     }
 }

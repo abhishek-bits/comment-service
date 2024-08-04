@@ -8,17 +8,9 @@ import java.util.Optional;
 
 public interface CommentService {
     Optional<Comment> getCommentById(Long id);
-
-    CommentDto getCommentDtoById(Long id);
-
-    List<Comment> getAllComments();
-
-    List<CommentDto> getAllCommentDtos();
-
-    List<Comment> getRepliesByCommentId(Long commentId);
-
+    List<CommentDto> getAllComments();
     Comment saveComment(Comment comment);
-    Comment updateComment(Comment comment);
+    Comment updateCommentById(Long id, Comment comment);
     Comment deleteCommentById(Long id);
 
 

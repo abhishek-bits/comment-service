@@ -15,5 +15,6 @@ import java.util.List;
 public class CommentDto {
     private Long id;
     private String description;
+    private Integer likes;
     private List<CommentDto> replies;
 }
